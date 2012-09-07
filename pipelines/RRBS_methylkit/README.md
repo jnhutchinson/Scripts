@@ -9,7 +9,7 @@
 - [Methylkit](http://code.google.com/p/methylkit/) based analysis to show CpG coverage and %CpG methylation distributions
 - generates a single html report for each sample 
 
-![Analytical Flow](RRBSQC.png)
+![Analytical Flow](http://dl.dropbox.com/u/4253254/Resources/RRBSQC.png)
 
 ##Dependencies
 
