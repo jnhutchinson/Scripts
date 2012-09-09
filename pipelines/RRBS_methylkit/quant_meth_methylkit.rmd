@@ -3,7 +3,7 @@
 ## Methylkit QC
 
 ```{r setup, echo=FALSE}
-opts_chunk$set(tidy=TRUE, cache=TRUE, echo=FALSE, highlight=TRUE, figalign="center", fig.height=8.5, fig.width=8.5, message=FALSE, error=FALSE, warning=FALSE)
+opts_chunk$set(tidy=TRUE, cache=TRUE, echo=FALSE, highlight=TRUE, figalign="center", fig.height=8.5, fig.width=8.5, message=FALSE, error=FALSE, warnings=FALSE)
 ```
 
 ```{r libraries_vars}
