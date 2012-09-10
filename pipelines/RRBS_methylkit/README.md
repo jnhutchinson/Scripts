@@ -36,6 +36,9 @@
 	- hpc/pandoc-1.9.3_ghc-7.4.1 *(for converion of QC report into html)*  
 	- math/R-2.15.0 *(for methykit)*
 	- hpc/java-1.6 *(for Picard based alignment (sam format) coordinate-based sorting)*
+- **R libraries**
+	- 	methylkit  
+	- 	knitr 	
 
 
 ##Description of scripts
