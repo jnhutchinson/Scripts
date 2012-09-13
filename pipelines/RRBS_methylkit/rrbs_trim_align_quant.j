@@ -20,6 +20,7 @@ PICARDDIR="/n/HSPH/local/share/java/picard"
 
 //TRIM VARIABLES
 QUALITY=30 //trim bases with phred quality scores lower than this
+ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim
 
 //BISMARK ALIGNER VARIABLES
 BUILD="hg19" //genome build
