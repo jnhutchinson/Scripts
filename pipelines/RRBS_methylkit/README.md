@@ -62,7 +62,9 @@
 
 **TRIM VARIABLES**  
 `QUALITY - trim bases from reads with phred quality scores lower than this`
-[(phred quality scores)](http://en.wikipedia.org/wiki/Phred_quality_score)
+[(phred quality scores)](http://en.wikipedia.org/wiki/Phred_quality_score)  
+`ADAPTER - adapter sequence used in prepping library`   
+(if you don't know the adapter sequence, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify)
 
 **BISMARK ALIGNER VARIABLES**  
 `BUILD`- genome build  
