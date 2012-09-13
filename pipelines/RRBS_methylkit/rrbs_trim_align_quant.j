@@ -55,7 +55,7 @@ forward input
 @Transform("trimmed.fq")
 trim_galore = {
 exec 	"""
-		trim_galore --rrbs --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --quality ${QUALITY} $input
+		trim_galore --rrbs --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --quality ${QUALITY} $input
 		"""
 }
 
