@@ -1,35 +1,26 @@
-////////////////////////////////////////////////////////////////////////////////////////////////
-//DEPENDENCIES
-
-//Bismark directory must be in PATH
-//Reference genomes must be preprepared with bismark
-//module load bio/cutadapt-1
-//module load bio/bowtie
-//module load hpc/pandoc-1.9.3_ghc-7.4.1 
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //VARIABLES
 
 //DIRECTORIES
-BASEDIR="/n/home08/jhutchin/projects/lk_rrbs/data"
+BASEDIR="/n/home08/jhutchin/projects/lk_rrbs/data" //the directory with the fastq files you would like to process
 TMPDIR="/n/scratch00/hsph/tmp"
-SCRIPTDIR="/n/home08/jhutchin/projects/lk_rrbs/scripts/RRBS_methylkit"
-QUANTMETHSCRIPT="/n/home08/jhutchin/projects/lk_rrbs/scripts/RRBS_methylkit/knitr_quant_meth_methylkit.r"
-PICARDDIR="/n/HSPH/local/share/java/picard"
+SCRIPTDIR="/n/home08/jhutchin/projects/lk_rrbs/scripts/RRBS_methylkit" //directory where you have place the scripts
+PICARDDIR="/n/HSPH/local/share/java/picard" //directory where the Picard tools are located
 
 //TRIM VARIABLES
 QUALITY=30 //trim bases with phred quality scores lower than this
-ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim
+ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim, if unknown, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify
 
 //BISMARK ALIGNER VARIABLES
 BUILD="hg19" //genome build
 DIRECTIONVAR="non_directional" //options are directional or non_directional
-REFERENCEGENOMEDIR="/n/scratch00/hsph/biodata/genomes/Hsapiens/hg19/bismark/UCSC"
+REFERENCEGENOMEDIR="/n/scratch00/hsph/biodata/genomes/Hsapiens/hg19/bismark/UCSC" //bismark prepared genome
 
 //METHYLKIT CpG QUANTITATION VARIABLES
 MINIMUMCOVERAGE=10 //minimum read coverage to call a methylation status for a base
 MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for a base
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +69,7 @@ exec 	"""
 //quantitate methylation with methylkit, sam files will be parsed and CpG C/T conversions counted for each individual sample
 quantmeth = {
 exec	"""
-		$QUANTMETHSCRIPT $input $BASEDIR $BUILD $SCRIPTDIR $MINIMUMCOVERAGE $MINIMUMQUALITY
+		${SCRIPTDIR}/knitr_quant_meth_methylkit.r $input $BASEDIR $BUILD $SCRIPTDIR $MINIMUMCOVERAGE $MINIMUMQUALITY
 		"""
 }
 

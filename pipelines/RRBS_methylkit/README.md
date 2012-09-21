@@ -15,6 +15,11 @@
 
 - **[bpipe](http://code.google.com/p/bpipe/)** binary directory must be in PATH
 
+
+- **[FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)** must be in PATH
+	- on Odyssety can also load module bio/fastqc-0.10.0
+
+
 - **bismark** binary directory must be in PATH  
 
 - **Reference genome(s)** must be preprepared with bismark_genome_preparation  
@@ -72,6 +77,7 @@
 `REFERENCEGENOMEDIR`- directory where your bismark prepared reference genome is located
 
 **METHYLKIT CpG QUANTITATION VARIABLES**  
+`
 `MINIMUMCOVERAGE` - minimum read coverage to call a methylation status for a base  
 `MINIMUMQUALITY` - minimum phred quality score to call a methylation status for a base  
 
