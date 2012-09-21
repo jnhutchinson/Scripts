@@ -17,7 +17,7 @@
 
 
 - **[FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)** must be in PATH
-	- on Odyssety can also load module bio/fastqc-0.10.0
+	- alternatively on Odyssey you can also load module bio/fastqc-0.10.0
 
 
 - **bismark** binary directory must be in PATH  
@@ -77,7 +77,7 @@
 `REFERENCEGENOMEDIR`- directory where your bismark prepared reference genome is located
 
 **METHYLKIT CpG QUANTITATION VARIABLES**  
-`
+
 `MINIMUMCOVERAGE` - minimum read coverage to call a methylation status for a base  
 `MINIMUMQUALITY` - minimum phred quality score to call a methylation status for a base  
 
@@ -93,6 +93,7 @@
 - the script will generate quite a few directories and files, but the important ones to keep are the `figures`, `fastqc` 
 - the `docs` directory contains the report for the bpipe run, with times each stage took
 - the `methylation_quantitation_results` directory contains the *methylkit* generated CpG methylation quantitations, that can be reloaded into *methylkit* to do the differential methylation analyses
+- commandlog.txt contains the fully qualified commands that are issued in the bpipe run and can be very useful for troubleshooting
 
  	
  	
