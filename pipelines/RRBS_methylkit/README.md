@@ -25,10 +25,10 @@
 - **Reference genome(s)** must be preprepared with bismark_genome_preparation  
 
 	- mm9 UCSC based genome is currently stored on Odyssey at:
-	` /n/scratch00/hsph/biodata/genomes/Mmusculus/mm9/bismark/UCSC`  
+	` /n/hsphS10/hsphfs1/chb/biodata/genomes/Mmusculus/mm9/bismark/UCSC`  
 	
 	- hg19 UCSC base genome is currently stored on Odyssety at:
-	`/n/scratch00/hsph/biodata/genomes/Hsapiens/hg19/bismark/UCSC`  
+	`/n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19/bismark/UCSC`  
 	
 
 - **[Picard](http://picard.sourceforge.net/command-line-overview.shtml)** tools available on system  
@@ -41,6 +41,7 @@
 	- hpc/pandoc-1.9.3_ghc-7.4.1 *(for converion of QC report into html)*  
 	- math/R-2.15.0 *(for methykit)*
 	- hpc/java-1.6 *(for Picard based alignment (sam format) coordinate-based sorting)*
+
 - **R libraries**
 	- 	methylkit  
 	- 	knitr 	
@@ -70,6 +71,7 @@
 [(phred quality scores)](http://en.wikipedia.org/wiki/Phred_quality_score)  
 `ADAPTER - adapter sequence used in prepping library`   
 (if you don't know the adapter sequence, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify)
+`MINTRIMMEDLENGTH` - reads that are trimmed or truncated below this many bp's will be discarded
 
 **BISMARK ALIGNER VARIABLES**  
 `BUILD`- genome build  
