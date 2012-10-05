@@ -71,6 +71,7 @@
 [(phred quality scores)](http://en.wikipedia.org/wiki/Phred_quality_score)  
 `ADAPTER - adapter sequence used in prepping library`   
 (if you don't know the adapter sequence, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify)
+
 `MINTRIMMEDLENGTH` - reads that are trimmed or truncated below this many bp's will be discarded
 
 **BISMARK ALIGNER VARIABLES**  
