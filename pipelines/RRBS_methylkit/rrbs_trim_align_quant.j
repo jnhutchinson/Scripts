@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //VARIABLES
 
@@ -10,17 +9,17 @@ PICARDDIR="/n/HSPH/local/share/java/picard" //directory where the Picard tools a
 
 //TRIM VARIABLES
 QUALITY=30 //trim bases with phred quality scores lower than this
-ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACCTTGTAATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim, if unknown, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify
+ADAPTER="AGATCGGAAGAGC" //adapter to trim, if unknown, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify
+MINTRIMMEDLENGTH=25
 
 //BISMARK ALIGNER VARIABLES
 BUILD="hg19" //genome build
 DIRECTIONVAR="non_directional" //options are directional or non_directional
-REFERENCEGENOMEDIR="/n/scratch00/hsph/biodata/genomes/Hsapiens/hg19/bismark/UCSC" //bismark prepared genome
+REFERENCEGENOMEDIR="/n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19/bismark/UCSC" //bismark prepared genome
 
 //METHYLKIT CpG QUANTITATION VARIABLES
 MINIMUMCOVERAGE=10 //minimum read coverage to call a methylation status for a base
 MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for a base
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,8 +35,8 @@ forward input
 //run fastqc on untrimmed
 fastqc = {
 exec	"""
-		fastqc --o ${BASEDIR}/fastqc/${input}/pretrim/ $input
-		"""
+	fastqc --o ${BASEDIR}/fastqc/${input}/pretrim/ $input
+	"""
 forward input
 }
 
@@ -46,8 +45,8 @@ forward input
 @Transform("trimmed.fq")
 trim_galore = {
 exec 	"""
-		trim_galore --rrbs --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --quality ${QUALITY} $input
-		"""
+	trim_galore --rrbs --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --length ${MINTRIMMEDLENGTH} --quality ${QUALITY} $input
+	"""
 }
 
 // Align
@@ -65,6 +64,7 @@ exec 	"""
 		java -Xmx2g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/SortSam.jar INPUT=$input OUTPUT=$output SORT_ORDER=coordinate
 		"""
 }
+
 
 //quantitate methylation with methylkit, sam files will be parsed and CpG C/T conversions counted for each individual sample
 quantmeth = {
