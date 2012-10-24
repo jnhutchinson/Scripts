@@ -21,7 +21,7 @@ REFERENCEGENOMEDIR="/n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19/bismark
 MINIMUMCOVERAGE=10 //minimum read coverage to call a methylation status for a base
 MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for a base
 
-if ( $DIRECTIONVAR=='non_directional') {
+if ( DIRECTIONVAR=='non_directional') {
     TRIM_GALORE_DIRECTIONVAR="--non_directional"
 } else {
     TRIM_GALORE_DIRECTIONVAR=""
