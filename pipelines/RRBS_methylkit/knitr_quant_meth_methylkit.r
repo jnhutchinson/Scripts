@@ -14,7 +14,7 @@ minimumquality=args[11]
 
 script_to_knit=file.path(scriptDir, "quant_meth_methylkit.rmd")
 markdown_output=file.path(dataDir, "quant_meth_methylkit.md")
-knit(input=script_to_knit, output=paste(sampleID, "quant_meth_methlykit.md", sep="_"), envir=environment())
+knit(input=script_to_knit, output=paste(sampleID, ".trimmed.fq_bismark.coordsorted.methylkit.md", sep=""), envir=environment())
 
 
 q()

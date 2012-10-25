@@ -1,5 +1,6 @@
 filename=$1
-sampleID=${filename%"_quant_meth_methlykit.md"}
+sampleID=${filename%".trimmed.fq_bismark.coordsorted.methylkit.md"}
+echo $sampleID
 newfile=${sampleID}temp.txt
 
 
@@ -24,5 +25,8 @@ cat ${sampleID}.mapping.report.tmp >>${sampleID}_QC_report.md
 echo -e "\n---\n" >>${sampleID}_QC_report.md 
 
 cat $filename >>${sampleID}_QC_report.md
+
+rm ${sampleID}.mapping.report.tmp
+rm ${sampleID}.trimming.report.tmp
 
 pandoc -f markdown -t html -c http://dl.dropbox.com/u/4253254/CSS/GitHub.css  ${sampleID}_QC_report.md -o ${sampleID}_QC_report.html
