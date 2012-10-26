@@ -3,7 +3,7 @@
 
 //DIRECTORIES
 BASEDIR="/n/hsphS10/hsphfs1/chb/projects/rrbs_workflows/sample_data/AB_data" //the directory with the fastq files you would like to process
-TMPDIR="/n/scratch00/hsph/tmp"
+TMPDIR="/n/hsphS10/hsphfs1/tmp"
 SCRIPTDIR="/n/home08/jhutchin/scripts/pipelines/RRBS_methylkit" //directory where you have place the scripts
 PICARDDIR="/n/HSPH/local/share/java/picard" //directory where the Picard tools are located
 
@@ -14,18 +14,19 @@ MINTRIMMEDLENGTH=30
 
 //BISMARK ALIGNER VARIABLES
 BUILD="hg19" //genome build
-DIRECTIONVAR="non_directional" //options are directional or non_directional
+NONDIRECTIONAL_LIB="NO"
 REFERENCEGENOMEDIR="/n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19/bismark/UCSC" //bismark prepared genome
 
 //METHYLKIT CpG QUANTITATION VARIABLES
 MINIMUMCOVERAGE=10 //minimum read coverage to call a methylation status for a base
 MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for a base
 
-if ( DIRECTIONVAR=='non_directional') {
-    TRIM_GALORE_DIRECTIONVAR="--non_directional"
+if (NONDIRECTIONAL_LIB=='YES') {
+    DIRECTIONVAR="--non_directional"  
+
 } else {
-    TRIM_GALORE_DIRECTIONVAR=""
-}
+    DIRECTIONVAR=""
+ }
 
 
 
@@ -54,7 +55,7 @@ forward input
 @Transform("trimmed.fq")
 trim_galore = {
 exec 	"""
-	trim_galore --rrbs ${TRIM_GALORE_DIRECTIONVAR} --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --length ${MINTRIMMEDLENGTH} --quality ${QUALITY} $input
+	trim_galore --rrbs ${DIRECTIONVAR} --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --length ${MINTRIMMEDLENGTH} --quality ${QUALITY} $input
 	"""
 }
 //input.trimmed.fq
@@ -63,7 +64,7 @@ exec 	"""
 @Transform("fq_bismark.sam")
 bismarkalign = {
 exec 	"""
-	bismark -n 1 -l 50 --$DIRECTIONVAR ${REFERENCEGENOMEDIR}/ $input
+	bismark -n 1 -l 50 ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
 	"""	
 }
 //input.trimmed.fq_bismark.sam
