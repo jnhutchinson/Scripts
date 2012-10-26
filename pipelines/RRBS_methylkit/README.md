@@ -76,7 +76,7 @@
 
 **BISMARK ALIGNER VARIABLES**  
 `BUILD`- genome build  
-`DIRECTIONVAR`- is the library directional (you only sequenced the bisulfite converted forward OR reverse strand ) or non-direcitonal (you sequenced both the bisulfite converted forward AND reverse strands) *(options are "directional" or "non_directional", including the quotation marks)*  
+`NONDIRECTIONAL_LIB`- is the library nondirectional (you sequenced both the bisulfite converted forward AND reverse strands) *(options are "YES" or "NO", not including the quotation marks)*  
 `REFERENCEGENOMEDIR`- directory where your bismark prepared reference genome is located
 
 **METHYLKIT CpG QUANTITATION VARIABLES**  
