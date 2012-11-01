@@ -33,6 +33,13 @@ if (NONDIRECTIONAL_LIB=='YES') {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // ANALYSES
 
+//filelist
+//makefilelist = {
+//exec 	"""
+//		echo $input >>filelist.txt
+//		"""
+//forward input
+//}
 
 //setupdirectories
 setupdirs = {
@@ -64,7 +71,7 @@ exec 	"""
 @Transform("fq_bismark.sam")
 bismarkalign = {
 exec 	"""
-	bismark -n 1 -l 50 ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
+	bismark -n 1 ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
 	"""	
 }
 //input.trimmed.fq_bismark.sam
@@ -88,12 +95,22 @@ exec	"""
 }
 //input.trimmed.fq_bismark.coordsorted.methylkit.md
 
-//Compile results
-compile_results = {
+//Compile individual reports
+compile_individual_reports = {
 exec	"""
 		bash ${SCRIPTDIR}/compile_results.sh $input
 		"""
 }
 
 
-Bpipe.run {"%.fastq" * [setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_results]}
+//Unite reports
+//unite_reports = {
+//exec 	"""
+//	bash report.sh filelist.txt
+//		"""
+//
+//}
+
+
+Bpipe.run {"%.fastq" * [setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports]}
+

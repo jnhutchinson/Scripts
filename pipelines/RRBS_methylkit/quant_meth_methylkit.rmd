@@ -1,4 +1,3 @@
-
 ---
 ## Methylkit QC
 
@@ -45,7 +44,7 @@ meth.quants <-read(location=file.path(methquantDir, paste(sampleID, "CpG.txt", s
 ### DESCRIPTIVE STATISTICS
 #### CpG coverage
 ```{r CpGcoverage, fig.cap=""}
-getCoverageStats(meth.quants, plot=FALSE, labels=TRUE)
+getCoverageStats(meth.quants, plot=FALSE, labels=TRUE, both.strands=TRUE )
 getCoverageStats(meth.quants, plot=TRUE, labels=TRUE)
 ```
 
