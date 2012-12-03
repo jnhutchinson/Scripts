@@ -55,3 +55,8 @@ do
 
 
 done < $1
+
+
+
+## test code to get adapter trim length histogram data
+#awk '/Histogram/,/RUN/' C554_ACTTGA_L003_R1.fastq_trimming_report.txt | sed '/Histogram/d' | sed '/RUN/d' |sed '/^$/d'

@@ -2,7 +2,7 @@
 //VARIABLES
 
 //DIRECTORIES
-BASEDIR="/n/hsphS10/hsphfs1/chb/projects/rrbs_workflows/sample_data/AB_data" //the directory with the fastq files you would like to process
+BASEDIR="/n/hsphS10/hsphfs1/chb/projects/rrbs_workflows/sample_data/AB_data/test" //the directory with the fastq files you would like to process
 TMPDIR="/n/hsphS10/hsphfs1/tmp"
 SCRIPTDIR="/n/home08/jhutchin/scripts/pipelines/RRBS_methylkit" //directory where you have place the scripts
 PICARDDIR="/n/HSPH/local/share/java/picard" //directory where the Picard tools are located
@@ -23,23 +23,20 @@ MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for
 
 if (NONDIRECTIONAL_LIB=='YES') {
     DIRECTIONVAR="--non_directional"  
-
 } else {
     DIRECTIONVAR=""
  }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // ANALYSES
-
 //filelist
-//makefilelist = {
-//exec 	"""
-//		echo $input >>filelist.txt
-//		"""
-//forward input
-//}
+makefilelist = {
+exec 	"""
+		echo $input >>filelist.txt
+		"""
+forward input
+}
 
 //setupdirectories
 setupdirs = {
@@ -48,7 +45,6 @@ exec	"""mkdir -p ${BASEDIR}/fastqc/${input}/posttrim/"""
 forward input
 }
 
-
 //run fastqc on untrimmed
 fastqc = {
 exec	"""
@@ -56,7 +52,6 @@ exec	"""
 	"""
 forward input
 }
-//input.fastq
 
 // Trim and FastQC
 @Transform("trimmed.fq")
@@ -65,7 +60,6 @@ exec 	"""
 	trim_galore --rrbs ${DIRECTIONVAR} --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --length ${MINTRIMMEDLENGTH} --quality ${QUALITY} $input
 	"""
 }
-//input.trimmed.fq
 
 // Align
 @Transform("fq_bismark.sam")
@@ -74,17 +68,15 @@ exec 	"""
 	bismark -n 1 ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
 	"""	
 }
-//input.trimmed.fq_bismark.sam
 
 // sort sam 
 @Filter("coordsorted")
 sortsam = {
 exec 	"""
-		java -Xmx2g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/SortSam.jar INPUT=$input OUTPUT=$output SORT_ORDER=coordinate
-		"""
-}
-//input.trimmed.fq_bismark.coordsorted.sam
+	grep -v '^[[:space:]]*@' $input | sort -k3,3 -k4,4n  > $output
 
+	"""
+}
 
 //quantitate methylation with methylkit, sam files will be parsed and CpG C/T conversions counted for each individual sample
 @Transform("methylkit.md")
@@ -93,7 +85,6 @@ exec	"""
 		${SCRIPTDIR}/knitr_quant_meth_methylkit.r $input $BASEDIR $BUILD $SCRIPTDIR $MINIMUMCOVERAGE $MINIMUMQUALITY
 		"""
 }
-//input.trimmed.fq_bismark.coordsorted.methylkit.md
 
 //Compile individual reports
 compile_individual_reports = {
@@ -103,14 +94,6 @@ exec	"""
 }
 
 
-//Unite reports
-//unite_reports = {
-//exec 	"""
-//	bash report.sh filelist.txt
-//		"""
-//
-//}
 
-
-Bpipe.run {"%.fastq" * [setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports]}
-
+//Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports ]}
+Bpipe.run {"%.fastq" * [ trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports]}
