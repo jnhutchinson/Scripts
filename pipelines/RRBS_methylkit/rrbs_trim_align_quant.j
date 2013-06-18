@@ -2,14 +2,15 @@
 //VARIABLES
 
 //DIRECTORIES
-BASEDIR="/n/hsphS10/hsphfs1/chb/projects/rrbs_workflows/sample_data/AB_data/test" //the directory with the fastq files you would like to process
+BASEDIR="/n/hsphS10/hsphfs1/chb/projects/rw_pilot2_miseq/data/" //the directory with the fastq files you would like to process
 TMPDIR="/n/hsphS10/hsphfs1/tmp"
-SCRIPTDIR="/n/home08/jhutchin/scripts/pipelines/RRBS_methylkit" //directory where you have place the scripts
+SCRIPTDIR="/n/home08/jhutchin/Scripts/pipelines/RRBS_methylkit" //directory where you have place the scripts
 PICARDDIR="/n/HSPH/local/share/java/picard" //directory where the Picard tools are located
 
 //TRIM VARIABLES
 QUALITY=30 //trim bases with phred quality scores lower than this
-ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim, if unknown, use the first 13bp of the Illumina adapter 'AGATCGGAAGAGC' and check the FASTQC overrepresented sequences for adapters to verify
+
+ADAPTER="GATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG" //adapter to trim, if unknown, use the first 13bp of the Illumina adapter 'CAGATCGGAAGAG' and check the FASTQC overrepresented sequences for adapters to verify
 MINTRIMMEDLENGTH=30
 
 //BISMARK ALIGNER VARIABLES
@@ -18,11 +19,13 @@ NONDIRECTIONAL_LIB="NO"
 REFERENCEGENOMEDIR="/n/hsphS10/hsphfs1/chb/biodata/genomes/Hsapiens/hg19/bismark/UCSC" //bismark prepared genome
 
 //METHYLKIT CpG QUANTITATION VARIABLES
-MINIMUMCOVERAGE=10 //minimum read coverage to call a methylation status for a base
-MINIMUMQUALITY=20 //minimum phred quality score to call a methylation status for a base
+MINIMUMCOVERAGE=0 //minimum read coverage to call a methylation status for a base
+MINIMUMQUALITY=0 //minimum phred quality score to call a methylation status for a base
+MINIMUMCOVERAGE=0 //minimum read coverage to call a methylation status for a base
+MINIMUMQUALITY=0 //minimum phred quality score to call a methylation status for a base
 
 if (NONDIRECTIONAL_LIB=='YES') {
-    DIRECTIONVAR="--non_directional"  
+    DIRECTIONVAR="--directional"  
 } else {
     DIRECTIONVAR=""
  }
@@ -94,6 +97,4 @@ exec	"""
 }
 
 
-
-//Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports ]}
-Bpipe.run {"%.fastq" * [ trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports]}
+Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports ]}

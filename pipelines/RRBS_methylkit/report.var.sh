@@ -7,7 +7,7 @@ do
 	#extract metrics from trimming report
 	trim_report=${inputfile}_trimming_report.txt
 	length_trim_report=$(wc -l $trim_report | sed 's/ .*$//')
-	if [ -f $trim_report ] && [ $length_trim_report -eq 102 ] # check if file exists and is fully generated (should be 102 lines)
+	if [ -f $trim_report ] && [ $length_trim_report -gt 15 ] # check if file exists and is fully generated (should be 102 lines)
 		then
 		 sample_id=$(grep Input\ filename: $trim_report | sed 's/^.*: //g') 
 		 num_processed_reads=$(grep Processed\ reads: $trim_report | sed 's/Processed reads://g' |sed 's/^.*\s//') 
