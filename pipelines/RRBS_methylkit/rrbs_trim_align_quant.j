@@ -68,7 +68,7 @@ exec 	"""
 @Transform("fq_bismark.sam")
 bismarkalign = {
 exec 	"""
-	bismark -n 1 ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
+	bismark -n 1 --unmapped ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
 	"""	
 }
 
