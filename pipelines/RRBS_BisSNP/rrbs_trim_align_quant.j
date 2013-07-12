@@ -198,5 +198,5 @@ call_meth = {
 
 
 //Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + makebam + addreadgroups + reorder_contigs + dedupe +indexbam +count_covars + write_recal_BQscore_toBAM]}
-Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + makebam + addreadgroups + reorder_contigs + dedupe +count_covars + write_recal_BQscore_toBAM + call_meth]}
+Bpipe.run {"%.fastq" * [ trim_galore + bismarkalign + makebam + addreadgroups + reorder_contigs + dedupe + indexbam + count_covars + write_recal_BQscore_toBAM + call_meth]}
 
