@@ -1,6 +1,5 @@
-
 ## first import the gene model (gtf/gff) into the R envirnoment as a TranscriptDb object using import.gtf2db
-## should would with eitehr gtf or gff formats
+## should work with either gtf or gff formats
 import.gtf2db <- function(genemodel.file, exonnumber.attribute=NULL,...){
   require(GenomicFeatures) 
   require(tools)
