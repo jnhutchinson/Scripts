@@ -1,6 +1,5 @@
-Package: chb_utils
+Package: CHBUtils
 Title: "Useful utility functions used at the core"
-#Description: "Useful utility functions used at the core"
 Version: 0.1
 Authors@R: c(person("Rory", "Kirchner", email="rory.kirchner@gmail.com",
                     role = c("aut", "cre", "ths")),
