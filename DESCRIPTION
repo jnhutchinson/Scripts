@@ -1,0 +1,14 @@
+Package: CHBUtils
+Title: "Useful utility functions used at the core"
+Version: 0.1
+Authors@R: c(person("Rory", "Kirchner", email="rory.kirchner@gmail.com",
+                    role = c("aut", "cre", "ths")),
+             person("John", "Hutchinson", email="jnhutchinson@gmail.com",
+                    role = c("aut")),
+             person("Oliver", "Hofmann", email="ohofmann@hsph.harvard.edu",
+                    role = c("aut")),
+             person("Brad", "Chapman", email="chapmanb@50mail.com",
+                    role = c("aut")))
+Depends: R (>= 3.0.2)
+License: "MIT"
+LazyData: true
