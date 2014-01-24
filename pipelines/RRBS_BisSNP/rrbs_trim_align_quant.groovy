@@ -122,7 +122,7 @@ reorder_contigs = {
 dedupe = {
 	doc "Remove duplicates from BAM file as part of GATK preprocessing"
 	exec 	"""
-	      	java -Xmx2g -jar ${PICARDDIR}/MarkDuplicates.jar           
+	      	java -Xmx2g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/MarkDuplicates.jar           
 			MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
 			METRICS_FILE=out.metrics 
 	        REMOVE_DUPLICATES=true 
@@ -145,7 +145,7 @@ indexbam = {
 count_covars = {
 	from(".bam") {
 		exec 	"""
-				java -Xmx10g -jar ${BISSNPJAR} 
+				java -Xmx10g -Djava.io.tmpdir=${TMPDIR} -jar ${BISSNPJAR} 
 			-R ${REFERENCEGENOMEDIR}/genome.fa 
 			-I $input 
 			-T BisulfiteCountCovariates 
@@ -163,7 +163,7 @@ write_recal_BQscore_toBAM = {
 	from("bam","csv") {
 		transform("bam") to ("recal1.bam") {
 			exec 	"""
-				java -Xmx10g -jar $BISSNPJAR 
+				java -Xmx10g  -Djava.io.tmpdir=${TMPDIR} -jar $BISSNPJAR 
 				-R ${REFERENCEGENOMEDIR}/genome.fa 
 				-I $input1 
 				-o $output 
