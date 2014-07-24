@@ -3,44 +3,61 @@ load("sample.groovy")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // ANALYSES
-//filelist
+
+
+///make list of all input files
 makefilelist = {
-exec 	"""
-	echo $input >>filelist.txt
-	"""
-forward input
+	doc 	"Make a list of files processed"
+     	produce("filelist.txt") {
+      		exec 	""">filelist.txt"""
+		for (i in inputs) {
+		exec 	"""echo $i >>filelist.txt"""
+		}
+	}
 }
 
-//setupdirectories
-setupdirs = {
-exec	"""mkdir -p ${BASEDIR}/fastqc/${input}/pretrim/"""
-exec	"""mkdir -p ${BASEDIR}/fastqc/${input}/posttrim/"""
-forward input
-}
 
 //run fastqc on untrimmed
-fastqc = {
-exec	"""
-	fastqc --o ${BASEDIR}/fastqc/${input}/pretrim/ $input
-	"""
-forward input
+fastqc_pretrim = {
+    doc 	"Run FASTQC to generate QC metrics for the untrimmed reads"
+    output.dir = "${BASEDIR}/fastqc/${input.fastq}/pretrim/"
+    transform('.fastq')  to('_fastqc.zip')  {
+			exec "fastqc -o $output.dir $input.fastq"
+    }
 }
 
-// Trim and FastQC
-@Transform("trimmed.fq")
+// Trim & fastqc
 trim_galore = {
-exec 	"""
-	trim_galore --rrbs ${DIRECTIONVAR} --fastqc --fastqc_args "--outdir ${BASEDIR}/fastqc/${input}/posttrim" --adapter ${ADAPTER} --length ${MINTRIMMEDLENGTH} --quality ${QUALITY} $input
-	"""
-}
+	doc 	"Trim adapters and low quality bases from all reads"
+    	output.dir = "${BASEDIR}"
+	from("fastq") {
+		transform('.fastq') to ('.trimmed.fq'){
+			exec 	"""
+				trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
+				--fastqc 
+				--fastqc_args "--outdir ${BASEDIR}/fastqc/${input.fastq}/posttrim" 
+				--adapter ${ADAPTER} 
+				--length ${MINTRIMMEDLENGTH} 
+				--quality ${QUALITY} $input.fastq
+				"""
+		}	
+	}
+}	
+
 
 // Align
 @Transform("fq_bismark.sam")
 bismarkalign = {
-exec 	"""
-	bismark -n 1 --unmapped ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
-	"""	
+	doc 	"Align to genome with Bismark"
+	from('trimmed.fq') {	
+		transform('trimmed.fq') to ('trimmed.fq_bismark.sam') {
+			exec 	"""
+				bismark -n 1 --unmapped ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ $input
+				"""	
+		}
+	}
 }
+
 
 // sort sam 
 @Filter("coordsorted")
@@ -51,20 +68,6 @@ exec 	"""
 	"""
 }
 
-// Remove duplicates
-@Filter("deduped")
-dedupe = {
-exec 	"""
-      	java -Xmx2g -jar ${PICARDDIR}/MarkDuplicates.jar           
-		MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
-		METRICS_FILE=out.metrics 
-        REMOVE_DUPLICATES=true 
-        ASSUME_SORTED=true  
-        VALIDATION_STRINGENCY=LENIENT 
-        INPUT=$input 
-        OUTPUT=$output
-	"""
-}
 
 //quantitate methylation with methylkit, sam files will be parsed and CpG C/T conversions counted for each individual sample
 @Transform("methylkit.md")
@@ -82,4 +85,4 @@ exec	"""
 }
 
 
-Bpipe.run {"%.fastq" * [ setupdirs + fastqc + trim_galore + bismarkalign + sortsam + dedupe + quantmeth + compile_individual_reports ]}
+Bpipe.run {makefilelist + "%.fastq" * [ makefilelist + fastqc_pretrim +  trim_galore + bismarkalign + sortsam + quantmeth + compile_individual_reports ]}
