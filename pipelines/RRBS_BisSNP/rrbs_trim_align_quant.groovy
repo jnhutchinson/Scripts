@@ -6,7 +6,9 @@ makefilelist = {
 	doc 	"Make a list of files processed"
 	exec 	""">filelist.txt"""
 	for (i in inputs) {
-			exec 	"""echo $i >>filelist.txt"""
+			exec 	"""
+				echo $i >>filelist.txt
+				"""
 	}
 }
 
@@ -15,7 +17,9 @@ fastqc_pretrim = {
     doc 	"Run FASTQC to generate QC metrics for the untrimmed reads"
     output.dir = "${BASEDIR}/fastqc/${input.fastq}/pretrim/"
     transform('.fastq')  to('_fastqc.zip')  {
-			exec "fastqc -o $output.dir $input.fastq"
+			exec 	"""
+				fastqc -o $output.dir $input.fastq
+				"""
     }
 }
 
@@ -37,7 +41,6 @@ trim_galore = {
 	}
 }	
 
-
 // Align
 @Transform("fq_bismark.sam")
 bismarkalign = {
@@ -51,38 +54,16 @@ bismarkalign = {
 	}
 }
 
-//BSeQC
-bseqc = {
-	doc 	"Repair methylation biases with BSeQC"
-	transform("fq_bismark.sam") to ("fq_bismark_${input}_bseqc_filter.sam") {
-		exec	"""
-			${BSEQCBIN} 
-			mbias
-			-l ${READLENGTH} 
-			-r ${REFERENCEGENOMEDIR}/genome.fa 
-			-n ${input}_bseqc 
-			-s $input.sam
-			"""
-	}
-}
-
-//cleanupfilename
-dedupfilename= {
-	doc "Simplify filenames"
-    def outputs = [
-        file(input.sam).name.replaceAll('^.*fq_bismark_', ''),
-    ]
-    produce(outputs) {
-	exec	"""cp $input $output""" 
-	}
-}
 // make bam 
-@Transform("bam")
 makebam = {
-	doc "Compress SAM file to BAM file"
-	exec 	"""
-		java -Xmx2g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/SamFormatConverter.jar INPUT=$input OUTPUT=$output
-		"""
+	doc 	"Compress SAM file to BAM file"
+	transform('.sam') to ('.bam') {
+		exec 	"""
+			java -Xmx4g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/SamFormatConverter.jar 
+			INPUT=$input 
+			OUTPUT=$output
+			""","makebam"
+	}
 }
 
 // add read groups
@@ -102,7 +83,7 @@ addreadgroups = {
 		CREATE_INDEX=true 
 		VALIDATION_STRINGENCY=SILENT 
 		SORT_ORDER=coordinate
-		"""
+		""", "addreadgroups"
 }
 
 // reorder_contigs
@@ -114,7 +95,7 @@ reorder_contigs = {
 	 	INPUT=$input
 	  	OUTPUT=$output
 	  	REFERENCE=${REFERENCEGENOMEDIR}/genome.fa
-	  	"""
+	  	""", "reordercontigs"
 }
 
 // Remove duplicates
@@ -123,29 +104,35 @@ dedupe = {
 	doc "Remove duplicates from BAM file as part of GATK preprocessing"
 	exec 	"""
 	      	java -Xmx2g -Djava.io.tmpdir=${TMPDIR} -jar ${PICARDDIR}/MarkDuplicates.jar           
-			MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
-			METRICS_FILE=out.metrics 
+		MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
+		METRICS_FILE=out.metrics 
 	        REMOVE_DUPLICATES=true 
 	        ASSUME_SORTED=true  
 	        VALIDATION_STRINGENCY=LENIENT 
 	        INPUT=$input 
 	        OUTPUT=$output
-			"""
+		""", "dedupe"
 }
 		
 // indexbam
 indexbam = {
 	doc "Index BAM file"
-	transform(".bam") to (".bam.bai") {
-		exec 	"""samtools index $input"""
+	from("deduped.bam"){
+		transform(".bam") to (".bam.bai") {
+			exec 	"""
+				samtools index $input
+				""", "indexbam"
+		forward input
+     		}		
 	}
 }
+
 // count_covars
 @Transform("recal1.csv")
 count_covars = {
 	from(".bam") {
 		exec 	"""
-				java -Xmx10g -Djava.io.tmpdir=${TMPDIR} -jar ${BISSNPJAR} 
+			java -Xmx10g -Djava.io.tmpdir=${TMPDIR} -jar ${BISSNPJAR} 
 			-R ${REFERENCEGENOMEDIR}/genome.fa 
 			-I $input 
 			-T BisulfiteCountCovariates 
@@ -155,13 +142,13 @@ count_covars = {
 			-cov CycleCovariate 
 			-recalFile $output
 			-nt 8
-			"""
+			""", "countcovars"
 	}
 }			
 // write_recal_BQscore_toBAM
 write_recal_BQscore_toBAM = {
-	from("bam","csv") {
-		transform("bam") to ("recal1.bam") {
+	transform("bam") to ("recal1.bam") {
+		from("deduped.bam","csv") {
 			exec 	"""
 				java -Xmx10g  -Djava.io.tmpdir=${TMPDIR} -jar $BISSNPJAR 
 				-R ${REFERENCEGENOMEDIR}/genome.fa 
@@ -170,7 +157,7 @@ write_recal_BQscore_toBAM = {
 				-T BisulfiteTableRecalibration 
 				-recalFile $input2 
 				-maxQ 60
-				"""
+				""", "writerecal"
 		}
 	}
 }
@@ -178,9 +165,20 @@ write_recal_BQscore_toBAM = {
 // call_meth
 call_meth = {
 	transform("rawcpg.vcf", "rawsnp.vcf"){
-			exec "java -Xmx10g -jar $BISSNPJAR -R ${REFERENCEGENOMEDIR}/genome.fa -T BisulfiteGenotyper -I $input -vfn1 $output1 -vfn2 $output2 -stand_call_conf 20 -stand_emit_conf 0 -mmq 30 -mbq 0","BisSNPcaller"
+		exec 	"""
+			java -Xmx10g 
+			-jar $BISSNPJAR 
+			-R ${REFERENCEGENOMEDIR}/genome.fa 
+			-T BisulfiteGenotyper 
+			-I $input 
+			-vfn1 $output1 
+			-vfn2 $output2 
+			-stand_call_conf 20 
+			-stand_emit_conf 0 
+			-mmq 30 
+			-mbq 0
+			""", "callmeth"
 	}
 }
 
-run { makefilelist + "%fastq" * [ fastqc_pretrim +trim_galore +  bismarkalign + bseqc + dedupfilename + makebam + addreadgroups + reorder_contigs + dedupe + indexbam + count_covars + write_recal_BQscore_toBAM + call_meth]}
-//run {"%.fastq" * [ makefilelist + setupdirs + fastqc + trim_galore + bismarkalign + makebam + addreadgroups + reorder_contigs + dedupe + indexbam + count_covars + write_recal_BQscore_toBAM + call_meth]}
+run { makefilelist + "%fastq" * [ fastqc_pretrim + trim_galore + bismarkalign + makebam + addreadgroups + reorder_contigs + dedupe + indexbam + count_covars + write_recal_BQscore_toBAM + call_meth]}

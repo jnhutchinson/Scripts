@@ -1,4 +1,4 @@
-echo "sampleID	numprocessed_reads	%_trimmed_reads	%_quality_truncated_reads	%_reads_tooshort_after_trimming	posttrim_basic_statistics	overrepresented_seq	mapping_efficiency	%_methylated_CpG	%_methylated_CHG	%_methylated_CHH"
+echo "sampleID	numprocessed_reads	%_trimmed_reads	%_quality_truncated_reads	%_reads_tooshort_after_trimming	posttrim_basic_statistics	overrepresented_seq	num_reads_attempted_map	mapping_efficiency	%_methylated_CpG	%_methylated_CHG	%_methylated_CHH"
 
 while read inputfile
 do
@@ -38,12 +38,14 @@ do
 	 bismark_report=./${sampleID}.trimmed.fq_Bismark_mapping_report.txt
 	 if [ -f $bismark_report ] # check if file exists
 	 then 
-	       	map_eff=$(grep Mapping\ efficiency $bismark_report | sed 's/^.*:.//'| sed 's/%//') 
+		num_reads_to_be_mapped=$(grep Sequences\ analysed\ in\ total: $bismark_report | sed 's/^.*:.//'| sed 's/%//')	
+		map_eff=$(grep Mapping\ efficiency $bismark_report | sed 's/^.*:.//'| sed 's/%//') 
 	       	perc_meth_CpG=$(grep C\ methylated\ in\ CpG\ context: $bismark_report | sed 's/^.*:.//' | sed 's/%//')
                	perc_meth_CHG=$(grep C\ methylated\ in\ CHG\ context: $bismark_report | sed 's/^.*:.//' | sed 's/%//')
 		perc_meth_CHH=$(grep C\ methylated\ in\ CHH\ context: $bismark_report | sed 's/^.*:.//' | sed 's/%//') 
 	 else
-		map_eff="NA"
+		num_reads_to_be_mapped="NA"
+	 	map_eff="NA"
  		perc_meth_CpG="NA"
  		perc_meth_CHG="NA"
 		perc_meth_CHH="NA"
@@ -51,7 +53,7 @@ do
         
 
 	#output
-	echo "$sample_id	$num_processed_reads	$perc_trimmed_reads	$perc_quality_truncated_reads	$perc_reads_tooshort_after_trimming	$posttrim_basic_statistics	$overrepresented_seq	$map_eff	$perc_meth_CpG	$perc_meth_CHG	$perc_meth_CHH"
+	echo "$sample_id	$num_processed_reads	$perc_trimmed_reads	$perc_quality_truncated_reads	$perc_reads_tooshort_after_trimming	$posttrim_basic_statistics	$overrepresented_seq	$num_reads_to_be_mapped	$map_eff	$perc_meth_CpG	$perc_meth_CHG	$perc_meth_CHH"
 
 
 done < $1

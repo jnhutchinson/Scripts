@@ -1,4 +1,4 @@
-#!/n/sw/R-2.15.0/bin/Rscript
+#!/n/sw/centos6/R-3.0.2/bin/Rscript
 
 library(knitr)
 args=commandArgs()
