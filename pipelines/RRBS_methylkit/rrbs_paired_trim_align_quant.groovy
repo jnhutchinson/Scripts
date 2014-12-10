@@ -34,34 +34,33 @@ mkfastqcdirs = {
 
 //run fastqc on untrimmed
 fastqc_pretrim = {
-    doc 	"Run FASTQC to generate QC metrics for the untrimmed reads"
-    output.dir = "${BASEDIR}/fastqc/pretrim/"
-    transform('.fastq')  to('_fastqc.zip')  {
+	doc 	"Run FASTQC to generate QC metrics for the untrimmed reads"
+    	output.dir = "${BASEDIR}/fastqc/pretrim/"
+    	transform('.fastq')  to('_fastqc.zip')  {
 		multi 	"fastqc -o $output.dir $input1.fastq",
 			"fastqc -o $output.dir $input2.fastq"
-			
-    }
+    	}
+	forward input
 }
 
 // Trim & fastqc
 trim_galore = {
 	doc 	"Trim adapters and low quality bases from all reads"
 	output.dir = "${BASEDIR}"
-	from("fastq") {
-		transform('.fastq') to ('.val_*.fq'){
-			exec 	"""
-				trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
-				--paired
-				--retain_unpaired
-				--fastqc 
-				--fastqc_args "--outdir ${BASEDIR}/fastqc/posttrim" 
-				--adapter ${ADAPTER} 
-				--a2 ${ADAPTER}
-				--r1 ${MINTRIMMEDLENGTH}
-				--r2 ${MINTRIMMEDLENGTH} 
-				--quality ${QUALITY} $input1.fastq $input2.fastq
-				"""
-		}
+	transform ('.fastq') to ('_val_*.fq'){
+		exec 	"""
+			trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
+			--paired
+			--retain_unpaired
+			--fastqc 
+			--fastqc_args "--outdir ${BASEDIR}/fastqc/posttrim" 
+			--adapter ${ADAPTER} 
+			--a2 ${ADAPTER}
+			--length ${MINTRIMMEDLENGTH}
+			--r1 ${MINTRIMMEDLENGTH}
+			--r2 ${MINTRIMMEDLENGTH} 
+			--quality ${QUALITY} $input1.fastq $input2.fastq
+			"""
 	}
 }	
 
@@ -87,7 +86,7 @@ sortsam = {
 //quantitate methylation with methylkit, sam files will be parsed and CpG C/T conversions counted for each individual sample
 quantmeth = {
 	doc "Quantitate methylation with methylKit"
-	transform('.val_1.fq_bismark_pe.coordsorted.sam') to ('.trimmed.fq_bismark.coordsorted.methylkit.md') {
+	transform('.fq_bismark_pe.coordsorted.sam') to ('.fq_bismark_pe.coordsorted.methylkit.md') {
 		exec	"""
 			${SCRIPTDIR}/knitr_paired_quant_meth_methylkit.r $input $BASEDIR $BUILD $SCRIPTDIR $MINIMUMCOVERAGE $MINIMUMQUALITY
 			""", "quantmeth"

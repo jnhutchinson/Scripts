@@ -49,7 +49,7 @@ trim_galore = {
 	doc 	"Trim adapters and low quality bases from all reads"
 	output.dir = "${BASEDIR}"
 	from("fastq") {
-		transform('.fastq') to ('.trimmed.fq'){
+		produce ('fq'){
 			exec 	"""
 				trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
 				--fastqc 
