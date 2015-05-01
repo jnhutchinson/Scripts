@@ -47,27 +47,25 @@ fastqc_pretrim = {
 trim_galore = {
 	doc 	"Trim adapters and low quality bases from all reads"
 	output.dir = "${BASEDIR}"
-	transform ('.fastq') to ('_val_*.fq'){
-		exec 	"""
-			trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
-			--paired
-			--retain_unpaired
-			--fastqc 
-			--fastqc_args "--outdir ${BASEDIR}/fastqc/posttrim" 
-			--adapter ${ADAPTER} 
-			--a2 ${ADAPTER}
-			--length ${MINTRIMMEDLENGTH}
-			--r1 ${MINTRIMMEDLENGTH}
-			--r2 ${MINTRIMMEDLENGTH} 
-			--quality ${QUALITY} $input1.fastq $input2.fastq
-			"""
-	}
-}	
+		produce (input1.prefix+".val_1.fq", input2.prefix+".val_2.fq"){
+			exec 	"""
+				trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
+				--paired
+				--retain_unpaired
+				--fastqc 
+				--fastqc_args "--outdir ${BASEDIR}/fastqc/posttrim" 
+				--adapter ${ADAPTER} 
+				--a2 ${ADAPTER}
+				--length ${MINTRIMMEDLENGTH}
+				--quality ${QUALITY} $input1.fastq $input2.fastq
+				"""
+		}
+}
 
 // Align
 bismarkalign = {
 	doc 	"Align to genome with Bismark"
-		transform('.fq_bismark_pe.sam') {
+	from('.val_*.fq')	transform('fq_bismark_pe.sam') {
 			exec 	"""
 				bismark -n 1 --unmapped ${DIRECTIONVAR} ${REFERENCEGENOMEDIR}/ -1 $input1 -2 $input2
 				"""	

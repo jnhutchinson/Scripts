@@ -1,0 +1,8 @@
+PATH=$PATH:/n/hsphS10/hsphfs1/chb/local/bin:~/.local/bin/:~/.local/bin/bismark_v0.7.7/:~/.local/bin/BisSNP/:~/.local/bin/bpipe-0.9.8.6_rc/bin/
+module load centos6/R-3.1.1
+module load hpc/java-1.6 
+module load hpc/jdk-1.6
+module load hpc/perl-5.16.0
+module load centos6/pandoc-1.12.3.3
+module load centos6/samtools-0.1.19
+export TMP="/n/hsphS10/hsphfs1/chb/tmp"

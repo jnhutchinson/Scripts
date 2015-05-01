@@ -4,7 +4,7 @@ library(knitr)
 args=commandArgs()
 print(args)
 samfilename=args[6] # coordinate sorted sam file from bismark alignment, passed at bpipe command line, specified in bpipe variables
-sampleID=sub("_val_1.trimmed.fq_bismark.coordsorted.sam", "", basename(samfilename))
+sampleID=sub(".trimmed.fq_bismark.coordsorted.sam", "", basename(samfilename))
 dataDir=args[7] # directory with the sam file, passed at bpipe command line, specified in bpipe variables
 methquantDir=paste(dataDir, "methylation_quantitation_results", sep="/")
 build=args[8] # genomic build, passed at bpipe command line, specified in bpipe variables
@@ -14,7 +14,7 @@ minimumquality=args[11]
 
 script_to_knit=file.path(scriptDir, "quant_meth_methylkit.rmd")
 markdown_output=file.path(dataDir, "quant_meth_methylkit.md")
-knit(input=script_to_knit, output=paste(sampleID, "_val_1.trimmed.fq_bismark.coordsorted.methylkit.md", sep=""), envir=environment())
+knit(input=script_to_knit, output=paste(sampleID, ".trimmed.fq_bismark.coordsorted.methylkit.md", sep=""), envir=environment())
 
 
 q()

@@ -49,7 +49,7 @@ trim_galore = {
 	doc 	"Trim adapters and low quality bases from all reads"
 	output.dir = "${BASEDIR}"
 	from("fastq") {
-		produce ('fq'){
+		transform('.fastq') to ('.trimmed.fq'){
 			exec 	"""
 				trim_galore ${RRBSVAR} ${DIRECTIONVAR} 
 				--fastqc 
@@ -63,7 +63,7 @@ trim_galore = {
 }	
 
 // Align
-@Transform("fq_bismark.sam")
+//@Transform("fq_bismark.sam")
 bismarkalign = {
 	doc 	"Align to genome with Bismark"
 	from('trimmed.fq') {	

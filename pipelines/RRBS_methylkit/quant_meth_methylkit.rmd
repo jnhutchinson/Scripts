@@ -17,8 +17,6 @@ Sample ID - `r sampleID`
 Data Directory - `r dataDir`  
 Sample Alignment File Name - `r basename(samfilename)`  
 
-### Quantitate methylation at all CpGs covered by reads and save out results  
-
 CpG methylation quantitation directory - `r methquantDir`  
 minimum read coverage to call a methylation status for a base - `r minimumcoverage`  
 minimum phred quality score to call a methylation status for a base - `r minimumquality`
@@ -53,5 +51,3 @@ getCoverageStats(meth.quants, plot=TRUE, labels=TRUE)
 getMethylationStats(meth.quants, plot=FALSE)
 getMethylationStats(meth.quants, plot=TRUE, labels=FALSE)
 ```
-
-q()
